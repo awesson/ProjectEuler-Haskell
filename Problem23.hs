@@ -1,4 +1,9 @@
-half num = num `quot` 2
+import Data.List
+
+smallestAbundantNum = 12
+maxNonAbundantPairNum = 28123
+
+half = (`quot` 2)
 firstHalfList num = [1..(half num)]
 secondHalfList num = [(half num + 1)..(num - 1)]
 
@@ -9,16 +14,10 @@ properDivisors num = filter (isDivisor num) (firstHalfList num)
 isAbundant = (!!) (map abundantDef [0..])
     where abundantDef num = sum (properDivisors num) > num
 
-secondHalfListWDup num
-    | odd num = secondHalfList num
-    | otherwise = half num : secondHalfList num
-pairSums num = zip (firstHalfList num) (reverse $ secondHalfListWDup num)
+abundantNums = filter isAbundant [smallestAbundantNum..(half maxNonAbundantPairNum)]
 
-containsAbundantPair ((n1, n2):xs)
-    | not (isAbundant n1) || not (isAbundant n2) = containsAbundantPair xs
-    | otherwise = True
-containsAbundantPair [] = False
-isComposedOfAbundantPairSum num = containsAbundantPair $ pairSums num
+isComposedOfAbundantPairSum num = foldl' (anyAbundantSoFar num) False (relevantAbundantNums num)
+    where anyAbundantSoFar num acc val = acc || isAbundant (num - val)
+          relevantAbundantNums num = takeWhile (<= half num) abundantNums
 
-maxNonAbundantPairNum = 1000
 sumAllNonAbundantPairNums = sum $ filter (not . isComposedOfAbundantPairSum) [1..maxNonAbundantPairNum]
