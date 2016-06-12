@@ -6,7 +6,8 @@ isDivisor num d = (num `mod` d) == 0
 
 properDivisors num = filter (isDivisor num) (firstHalfList num)
 
-isAbundant num = sum (properDivisors num) > num
+isAbundant = (!!) (map abundantDef [0..])
+    where abundantDef num = sum (properDivisors num) > num
 
 secondHalfListWDup num
     | odd num = secondHalfList num
