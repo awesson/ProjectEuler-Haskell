@@ -4,12 +4,15 @@ smallestAbundantNum = 12
 maxNonAbundantPairNum = 28123
 
 half = (`quot` 2)
-firstHalfList num = [1..(half num)]
-secondHalfList num = [(half num + 1)..(num - 1)]
+upToSqrtList num = [2..(truncate (sqrt $ fromIntegral num))]
 
-isDivisor num d = (num `mod` d) == 0
+d `isDivisor` num = (num `mod` d) == 0
 
-properDivisors num = filter (isDivisor num) (firstHalfList num)
+properDivisors num = foldl' (properDivisorsHelper num) [1] (upToSqrtList num)
+    where properDivisorsHelper num acc val
+            | val `isDivisor` num && val == (num `quot` val) = val:acc
+            | val `isDivisor` num = val:(num `quot` val):acc
+            | otherwise = acc
 
 isAbundant = (!!) (map abundantDef [0..])
     where abundantDef num = sum (properDivisors num) > num
